@@ -168,13 +168,8 @@ ledgerlens/
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
 ## 👤 Author
 
 **Harsh Chavan**
 [LinkedIn](https://linkedin.com/in/harshchavan2003) · [GitHub](https://github.com/glossE)
+
