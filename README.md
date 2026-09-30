@@ -62,11 +62,33 @@ This spins up a PostgreSQL container on port `5432`.
 
 ### 3. Configure environment
 
-Set your Gemini API key in `application.properties` (or as an environment variable):
+Copy the example config and fill in your values:
+
+```bash
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+```
+
+Then set your Gemini API key in `src/main/resources/application.properties`:
 
 ```properties
 gemini.api.key=YOUR_API_KEY_HERE
 ```
+
+> `application.properties` is git-ignored so secrets never get committed. If the
+> key is missing or invalid, the app still runs and falls back to keyword-based
+> categorization.
+
+### Run with Docker (optional, deployment-ready)
+
+A multi-stage `Dockerfile` is included. Build and run the whole app as a container:
+
+```bash
+docker build -t ledgerlens .
+docker run -p 8080:8080 --env-file .env ledgerlens
+```
+
+The image reads `server.port=${PORT:8080}`, so it works on platforms like GCP
+Cloud Run that inject a `PORT` environment variable.
 
 ### 4. Run the backend
 

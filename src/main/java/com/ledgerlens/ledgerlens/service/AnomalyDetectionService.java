@@ -2,7 +2,6 @@ package com.ledgerlens.ledgerlens.service;
 
 import com.ledgerlens.ledgerlens.model.Transaction;
 import com.ledgerlens.ledgerlens.repository.TransactionRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,10 +10,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class AnomalyDetectionService {
 
     private final TransactionRepository transactionRepository;
+
+    public AnomalyDetectionService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
 
     private static final BigDecimal ROUND_NUMBER_THRESHOLD = new BigDecimal("50000");
 
@@ -46,7 +48,7 @@ public class AnomalyDetectionService {
         }
     }
 
-    // Flag: DEBIT transactions >= ₹50,000 where amount ends in 000 (e.g. 75000, 100000)
+    // Flag: DEBIT transactions >= 50,000 where amount is a multiple of 1000 (e.g. 75000, 100000)
     private void flagRoundNumbers(List<Transaction> transactions) {
         for (Transaction tx : transactions) {
             if (!"DEBIT".equalsIgnoreCase(tx.getType())) continue;
@@ -55,7 +57,7 @@ public class AnomalyDetectionService {
             // Check if the amount has no paise and is a multiple of 1000
             BigDecimal[] divAndRem = tx.getAmount().divideAndRemainder(new BigDecimal("1000"));
             if (divAndRem[1].compareTo(BigDecimal.ZERO) == 0) {
-                flag(tx, "Round-number transaction >= ₹50,000 — possible fabricated invoice");
+                flag(tx, "Round-number transaction >= 50,000 - possible fabricated invoice");
             }
         }
     }
@@ -98,7 +100,7 @@ public class AnomalyDetectionService {
             BigDecimal historicalTotal = historicalTotalByVendor.getOrDefault(vendor, BigDecimal.ZERO);
             long months = historicalMonthsByVendor.getOrDefault(vendor, 0L);
 
-            if (months == 0) continue; // No history — can't determine a spike
+            if (months == 0) continue; // No history - can't determine a spike
 
             BigDecimal monthlyAverage = historicalTotal.divide(new BigDecimal(months), 2, java.math.RoundingMode.HALF_UP);
             BigDecimal threshold = monthlyAverage.multiply(new BigDecimal("2.0"));
@@ -106,7 +108,7 @@ public class AnomalyDetectionService {
             if (batchSpend.compareTo(threshold) > 0) {
                 transactions.stream()
                         .filter(tx -> tx.getDescription().equalsIgnoreCase(vendor) && "DEBIT".equalsIgnoreCase(tx.getType()))
-                        .forEach(tx -> flag(tx, "Spend spike: vendor spend >200% of monthly average (avg: ₹" + monthlyAverage + ")"));
+                        .forEach(tx -> flag(tx, "Spend spike: vendor spend >200% of monthly average (avg: " + monthlyAverage + ")"));
             }
         }
     }

@@ -2,7 +2,6 @@ package com.ledgerlens.ledgerlens.service;
 
 import com.ledgerlens.ledgerlens.model.Transaction;
 import com.ledgerlens.ledgerlens.repository.TransactionRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,10 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CsvParserService {
 
     private final TransactionRepository transactionRepository;
+
+    public CsvParserService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 

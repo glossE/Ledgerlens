@@ -3,7 +3,6 @@ package com.ledgerlens.ledgerlens.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ledgerlens.ledgerlens.model.Transaction;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ import java.net.http.HttpResponse;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class GeminiService {
 
     @Value("${gemini.api.key}")
